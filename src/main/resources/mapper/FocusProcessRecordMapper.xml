@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kyle.aigf.dao.FocusProcessRecordMapper">
+
+    <select id="getTopKGroupedDuration"
+            resultType="com.kyle.aigf.model.vo.ProcessDurationAggregateVO">
+        SELECT process_name,
+               SUM(duration_seconds) AS durationSeconds
+        FROM focus_process_record
+        WHERE DATETIME(start_time) > DATETIME(#{startTime})
+          AND DATETIME(update_time) &lt; DATETIME(#{endTime})
+        GROUP BY process_name
+        ORDER BY durationSeconds DESC
+        LIMIT #{topK}
+    </select>
+</mapper>

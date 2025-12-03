@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: aigf
+  datasource:
+    url: jdbc:sqlite:data/monitor.db
+    driver-class-name: org.sqlite.JDBC
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+tts:
+  text2Audio: http://127.0.0.1:8000/api/tts
