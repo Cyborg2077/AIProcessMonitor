@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.kyle.aigf.dao.FocusProcessRecordMapper;
 import com.kyle.aigf.model.entity.FocusProcessRecord;
 import com.kyle.aigf.model.vo.ProcessDurationAggregateVO;
+import com.kyle.aigf.model.vo.ProcessDurationVO;
 import com.kyle.aigf.service.FocusProcessRecordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,32 +40,17 @@ public class FocusProcessRecordServiceImpl implements FocusProcessRecordService 
     }
 
     @Override
-    public List<FocusProcessRecord> findRange(LocalDateTime start, LocalDateTime end) {
-        return focusProcessRecordMapper.selectList(Wrappers.lambdaQuery(FocusProcessRecord.class)
-                .gt(FocusProcessRecord::getStartTime, start)
-                .lt(FocusProcessRecord::getUpdateTime, end)
-        );
+    public List<ProcessDurationVO> findRange(String start, String end) {
+        return focusProcessRecordMapper.findRange(start, end);
     }
 
     @Override
-    public List<FocusProcessRecord> findToday() {
-        LocalDateTime now = LocalDateTime.now();
-        return findRange(now.withHour(0).withMinute(0).withSecond(0).withNano(0),
-                now.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0));
+    public List<ProcessDurationVO> topKLongestFocusProcesses(int topK, String start, String end) {
+        return focusProcessRecordMapper.selectProcessDurationWithNickname(start, end, topK);
     }
 
     @Override
-    public List<FocusProcessRecord> topKLongestFocusProcesses(int topK, String start, String end) {
-        return focusProcessRecordMapper.selectList(Wrappers.lambdaQuery(FocusProcessRecord.class)
-                .gt(FocusProcessRecord::getStartTime, start)
-                .lt(FocusProcessRecord::getUpdateTime, end)
-                .orderByDesc(FocusProcessRecord::getDurationSeconds)
-                .last("LIMIT " + topK)
-        );
-    }
-
-    @Override
-    public List<ProcessDurationAggregateVO> groupedFocusDurations(int topK, String start, String end) {
-        return focusProcessRecordMapper.getTopKGroupedDuration(start, end, topK);
+    public List<ProcessDurationAggregateVO> groupedFocusDurations(int minDurationSeconds, String start, String end) {
+        return focusProcessRecordMapper.getTopKGroupedDuration(start, end, minDurationSeconds);
     }
 }

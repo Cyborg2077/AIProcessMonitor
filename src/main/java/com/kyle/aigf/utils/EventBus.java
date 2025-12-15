@@ -22,15 +22,11 @@ public class EventBus {
     private final AIService aiService;
 
 
-    public static final String CREATE_PROCESS_EVENT = "CREATE_PROCESS_EVENT";
-    public static final String DESTROY_PROCESS_EVENT = "DESTROY_PROCESS_EVENT";
     public static final String FOCUS_PROCESS_EVENT = "FOCUS_PROCESS_EVENT";
 
     @PostConstruct
     public void init() {
-//        this.subscribe(CREATE_PROCESS_EVENT, msg -> System.out.println("[ALERT] " + msg));
-//        this.subscribe(DESTROY_PROCESS_EVENT, msg -> System.out.println("[ALERT] " + msg));
-        this.subscribe(FOCUS_PROCESS_EVENT, focusDTO -> aiService.handleFocusProcessEvent((FocusProcessDTO) focusDTO));
+//        this.subscribe(FOCUS_PROCESS_EVENT, focusDTO -> aiService.handleFocusProcessEvent((FocusProcessDTO) focusDTO));
     }
 
     public <T> void subscribe(String event, Consumer<T> consumer) {

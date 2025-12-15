@@ -4,13 +4,45 @@
 
     <select id="getTopKGroupedDuration"
             resultType="com.kyle.aigf.model.vo.ProcessDurationAggregateVO">
-        SELECT process_name,
-               SUM(duration_seconds) AS durationSeconds
-        FROM focus_process_record
-        WHERE DATETIME(start_time) > DATETIME(#{startTime})
-          AND DATETIME(update_time) &lt; DATETIME(#{endTime})
-        GROUP BY process_name
-        ORDER BY durationSeconds DESC
+        SELECT
+        f.process_name,
+        SUM(f.duration_seconds) AS durationSeconds,
+        COALESCE(p.nickname, '') AS nickname
+        FROM focus_process_record f
+        LEFT JOIN process_info p ON f.process_name = p.process_name
+        WHERE
+        DATETIME(f.start_time) > DATETIME(#{startTime})
+        AND DATETIME(f.update_time) &lt; DATETIME(#{endTime})
+        GROUP BY f.process_name
+        HAVING durationSeconds > #{minDurationSeconds}
+        ORDER BY durationSeconds DESC;
+    </select>
+
+    <select id="selectProcessDurationWithNickname" resultType="com.kyle.aigf.model.vo.ProcessDurationVO">
+        SELECT
+        f.process_name,
+        f.duration_seconds AS durationSeconds,
+        COALESCE(p.nickname, '') AS nickname,
+        f.start_time,
+        f.update_time
+        FROM focus_process_record f
+        LEFT JOIN process_info p ON f.process_name = p.process_name
+        WHERE DATETIME(f.start_time) > DATETIME(#{startTime})
+        AND DATETIME(f.update_time) &lt; DATETIME(#{endTime})
+        ORDER BY f.duration_seconds DESC
         LIMIT #{topK}
+    </select>
+    <select id="findRange" resultType="com.kyle.aigf.model.vo.ProcessDurationVO">
+        SELECT
+        f.process_name,
+        f.duration_seconds AS durationSeconds,
+        COALESCE(p.nickname, '') AS nickname,
+        f.start_time,
+        f.update_time
+        FROM focus_process_record f
+        LEFT JOIN process_info p ON f.process_name = p.process_name
+        WHERE DATETIME(f.start_time) > DATETIME(#{startTime})
+        AND DATETIME(f.update_time) &lt; DATETIME(#{endTime})
+        ORDER BY f.id ASC
     </select>
 </mapper>

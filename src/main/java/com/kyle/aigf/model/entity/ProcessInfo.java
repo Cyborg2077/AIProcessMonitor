@@ -5,8 +5,8 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class AllowedProcess {
+public class ProcessInfo {
     private Integer id;
-    private Integer type;
     private String processName;
+    private String nickname;
 }

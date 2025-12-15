@@ -2,7 +2,7 @@ spring:
   application:
     name: aigf
   datasource:
-    url: jdbc:sqlite:data/monitor.db
+    url: jdbc:sqlite:C:/Users/Administrator/.myapp/monitor.db
     driver-class-name: org.sqlite.JDBC
 
 mybatis-plus:
